@@ -124,7 +124,7 @@ protected:
 	long   m_colorWidth;
 	long   m_colorHeight;
 
-	bool	m_bIsReceivingFrames;
+	bool   m_bIsReceivingFrames;
 
 private:
 	void computePointCurrentPointCloud(PointCloudf& pc, const mat4f& transform = mat4f::identity()) const;

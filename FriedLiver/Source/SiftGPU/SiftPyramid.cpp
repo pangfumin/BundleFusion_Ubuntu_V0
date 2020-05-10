@@ -385,10 +385,6 @@ void SiftPyramid::DetectKeypoints(const float* d_depthData)
 				keyLocScale, keyLocOffset, d_depthData, GlobalUtil::_SiftDepthMin, GlobalUtil::_SiftDepthMax);
 		}
 	}
-    std::cout << " _octave_num , param._dog_level_num: " <<  _octave_num << " " << param._dog_level_num << std::endl;
-//	std::vector<int> tem( _octave_num * param._dog_level_num);
-//
-//	cutilSafeCall(cudaMemcpy(tem.data(), d_featureCount, sizeof(int) * _octave_num * param._dog_level_num, cudaMemcpyDeviceToHost));
 	cutilSafeCall(cudaMemcpy(_levelFeatureNum, d_featureCount, sizeof(int) * _octave_num * param._dog_level_num, cudaMemcpyDeviceToHost));
 	_featureNum = 0;
 	for (int i = 0; i < _octave_num * param._dog_level_num; i++) {

@@ -174,7 +174,7 @@ public:
 		m_colorIntrinsics = m_RGBDSensor->getColorIntrinsics();
 		m_colorIntrinsics._m00 *= (float)m_widthIntegration / (float)rgbdSensorWidthColor;  //focal 
 		m_colorIntrinsics._m11 *= (float)m_heightIntegration/ (float)rgbdSensorHeightColor; 
-		m_colorIntrinsics._m02 *=  (float)(m_widthIntegration-1) / (float)(rgbdSensorWidthColor-1);	//principal point
+		m_colorIntrinsics._m02 *= (float)(m_widthIntegration-1) / (float)(rgbdSensorWidthColor-1);	//principal point
 		m_colorIntrinsics._m12 *= (float)(m_heightIntegration-1) / (float)(rgbdSensorHeightColor-1);
 		m_colorIntrinsicsInv = m_colorIntrinsics.getInverse();
 

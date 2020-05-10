@@ -186,237 +186,237 @@ int startDepthSensing(OnlineBundler* bundler, RGBDSensor* sensor, CUDAImageManag
 	g_depthSensingRGBDSensor = sensor;
 	g_CudaImageManager = imageManager;
 	g_depthSensingBundler = bundler;
-	if (GlobalAppState::get().s_generateVideo) g_transformWorld = GlobalAppState::get().s_topVideoTransformWorld;
+	if (GlobalAppState::get().s_generateVideo)
+	    g_transformWorld = GlobalAppState::get().s_topVideoTransformWorld;
         //std::cout << "startDepthSensing = " << g_transformWorld << std::endl;
        // std::cout << "startDepthSensing" << std::endl;
-        Init();
-       // std::cout << "This is after Init()!\n" << std::endl;
-        // Init GLFW
-        glfwInit();
-        // Set all the required options for GLFW
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    Init();
+   // std::cout << "This is after Init()!\n" << std::endl;
+    // Init GLFW
+    glfwInit();
+    // Set all the required options for GLFW
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-        // Create a GLFWwindow object that we can use for GLFW's functions
-        GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "BundleFusion_Ubuntu", nullptr, nullptr);
-        glfwMakeContextCurrent(window);
+    // Create a GLFWwindow object that we can use for GLFW's functions
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "BundleFusion_Ubuntu", nullptr, nullptr);
+    glfwMakeContextCurrent(window);
 
-         // Set the required callback functions
-        glfwSetKeyCallback(window, key_callback);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
-         // glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetCursorPosCallback(window, mouse_callback);
-        glfwSetScrollCallback(window, scroll_callback);
-         //glfwSetMouseButtonCallback(window, mouse_button_callback);
-    
+     // Set the required callback functions
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+     // glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+     //glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-         // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
-        glewExperimental = GL_TRUE;
-         // Initialize GLEW to setup the OpenGL Function pointers
-        glewInit();
 
-         // Define the viewport dimensions
-        glViewport(0, 0, WIDTH, HEIGHT);
-       //int count = 0;
-        while (!glfwWindowShouldClose(window))
-        {
-            //std::cout << "count = " << count << std::endl;
-            //std::cout << "Test!" << std::endl;
-            if (ConditionManager::shouldExit()) {
-		StopScanningAndExit(true);
-	    }
-            Timer t;
-            //double timeReconstruct = 0.0f;	double timeVisualize = 0.0f;	double timeReintegrate = 0.0f;
+     // Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
+    glewExperimental = GL_TRUE;
+     // Initialize GLEW to setup the OpenGL Function pointers
+    glewInit();
 
-	    //Start Timing
-	    if (GlobalBundlingState::get().s_enablePerFrameTimings) { GlobalAppState::get().WaitForGPU(); GlobalAppState::get().s_Timer.start(); }
-            
-            ///////////////////////////////////////
-	    // Read Input
-	    ///////////////////////////////////////
+     // Define the viewport dimensions
+    glViewport(0, 0, WIDTH, HEIGHT);
+    //int count = 0;
+    while (!glfwWindowShouldClose(window))
+    {
+        //std::cout << "count = " << count << std::endl;
+        //std::cout << "Test!" << std::endl;
+        if (ConditionManager::shouldExit()) {
+            StopScanningAndExit(true);
+        }
+        Timer t;
+        //double timeReconstruct = 0.0f;	double timeVisualize = 0.0f;	double timeReintegrate = 0.0f;
+
+        //Start Timing
+        if (GlobalBundlingState::get().s_enablePerFrameTimings) { GlobalAppState::get().WaitForGPU(); GlobalAppState::get().s_Timer.start(); }
+
+        ///////////////////////////////////////
+        // Read Input
+        ///////////////////////////////////////
 #ifdef RUN_MULTITHREADED
-	    ConditionManager::lockImageManagerFrameReady(ConditionManager::Recon);
-	    while (g_CudaImageManager->hasBundlingFrameRdy()) { //wait until bundling is done with previous frame
-		   ConditionManager::waitImageManagerFrameReady(ConditionManager::Recon);
-	    }
-            bool bGotDepth = g_CudaImageManager->process();
-             // bool bGotDepth;
-           // while(!(bGotDepth = g_CudaImageManager->process()));//change by guan only for kinect one!
-           // std::cout << "bGotDepth = " << bGotDepth << std::endl;
-	if (bGotDepth) {
-		g_CudaImageManager->setBundlingFrameRdy();					//ready for bundling thread
-		ConditionManager::unlockAndNotifyImageManagerFrameReady(ConditionManager::Recon);
-	}
-	if (!g_depthSensingRGBDSensor->isReceivingFrames()) { //sequence is done
-		if (bGotDepth) throw MLIB_EXCEPTION("ERROR bGotDepth = true but sequence is done");
+        ConditionManager::lockImageManagerFrameReady(ConditionManager::Recon);
+        while (g_CudaImageManager->hasBundlingFrameRdy()) { //wait until bundling is done with previous frame
+           ConditionManager::waitImageManagerFrameReady(ConditionManager::Recon);
+        }
+        bool bGotDepth = g_CudaImageManager->process();
+        // bool bGotDepth;
+        // while(!(bGotDepth = g_CudaImageManager->process()));//change by guan only for kinect one!
+        // std::cout << "bGotDepth = " << bGotDepth << std::endl;
+        if (bGotDepth) {
+            g_CudaImageManager->setBundlingFrameRdy();					//ready for bundling thread
+            ConditionManager::unlockAndNotifyImageManagerFrameReady(ConditionManager::Recon);
+        }
+        if (!g_depthSensingRGBDSensor->isReceivingFrames()) { //sequence is done
+            if (bGotDepth) throw MLIB_EXCEPTION("ERROR bGotDepth = true but sequence is done");
 
-		g_CudaImageManager->setBundlingFrameRdy();				// let bundling still optimize after scanning done
-		ConditionManager::unlockAndNotifyImageManagerFrameReady(ConditionManager::Recon);
-	}
+            g_CudaImageManager->setBundlingFrameRdy();				// let bundling still optimize after scanning done
+            ConditionManager::unlockAndNotifyImageManagerFrameReady(ConditionManager::Recon);
+        }
 
 
 #else
-	bool bGotDepth = g_CudaImageManager->process();
-	g_depthSensingBundler->processInput();
+bool bGotDepth = g_CudaImageManager->process();
+g_depthSensingBundler->processInput();
 #endif
-       
 
-	///////////////////////////////////////
-	// Fix old frames
-	///////////////////////////////////////
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
-       // std::cout << "2222" << std::endl;
-	reintegrate();                                                   
-        //
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeReIntegrate = t.getElapsedTimeMS(); }
- 
-       
+        ///////////////////////////////////////
+        // Fix old frames
+        ///////////////////////////////////////
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
+           // std::cout << "2222" << std::endl;
+        reintegrate();
+            //
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeReIntegrate = t.getElapsedTimeMS(); }
+
+
 #ifdef RUN_MULTITHREADED
-	//wait until the bundling thread is done with: sift extraction, sift matching, and key point filtering
-	ConditionManager::lockBundlerProcessedInput(ConditionManager::Recon);
-	while (!g_depthSensingBundler->hasProcssedInputFrame()) ConditionManager::waitBundlerProcessedInput(ConditionManager::Recon);
+        //wait until the bundling thread is done with: sift extraction, sift matching, and key point filtering
+        ConditionManager::lockBundlerProcessedInput(ConditionManager::Recon);
+        while (!g_depthSensingBundler->hasProcssedInputFrame()) ConditionManager::waitBundlerProcessedInput(ConditionManager::Recon);
 
-	if (!g_depthSensingRGBDSensor->isReceivingFrames()) { // let bundling still optimize after scanning done
-		g_depthSensingBundler->confirmProcessedInputFrame();
-		ConditionManager::unlockAndNotifyBundlerProcessedInput(ConditionManager::Recon);
-	}
+        if (!g_depthSensingRGBDSensor->isReceivingFrames()) { // let bundling still optimize after scanning done
+            g_depthSensingBundler->confirmProcessedInputFrame();
+            ConditionManager::unlockAndNotifyBundlerProcessedInput(ConditionManager::Recon);
+        }
 #endif
-        
-	///////////////////////////////////////
-	// Reconstruction of current frame
-	///////////////////////////////////////	
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
-	bool validTransform = true; bool bGlobalTrackingLost = false;
-	if (bGotDepth) {
-		mat4f transformation = mat4f::zero();
-		unsigned int frameIdx;
-		validTransform = g_depthSensingBundler->getCurrentIntegrationFrame(transformation, frameIdx, bGlobalTrackingLost);
-                std::cout << "transformation = " <<transformation << std::endl;
-                 
+
+        ///////////////////////////////////////
+        // Reconstruction of current frame
+        ///////////////////////////////////////
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
+        bool validTransform = true; bool bGlobalTrackingLost = false;
+        if (bGotDepth) {
+            mat4f transformation = mat4f::zero();
+            unsigned int frameIdx;
+            validTransform = g_depthSensingBundler->getCurrentIntegrationFrame(transformation, frameIdx, bGlobalTrackingLost);
+                    std::cout << "transformation = " <<transformation << std::endl;
+
 #ifdef RUN_MULTITHREADED
-		//allow bundler to process new frame
-		g_depthSensingBundler->confirmProcessedInputFrame();
-		ConditionManager::unlockAndNotifyBundlerProcessedInput(ConditionManager::Recon);
+            //allow bundler to process new frame
+            g_depthSensingBundler->confirmProcessedInputFrame();
+            ConditionManager::unlockAndNotifyBundlerProcessedInput(ConditionManager::Recon);
 #endif
 
-		if (GlobalAppState::get().s_binaryDumpSensorUseTrajectory && GlobalAppState::get().s_sensorIdx == 3) {
-			//overwrite transform and use given trajectory in this case
-			transformation = g_depthSensingRGBDSensor->getRigidTransform();
-			validTransform = true;
-		}
+            if (GlobalAppState::get().s_binaryDumpSensorUseTrajectory && GlobalAppState::get().s_sensorIdx == 3) {
+                //overwrite transform and use given trajectory in this case
+                transformation = g_depthSensingRGBDSensor->getRigidTransform();
+                validTransform = true;
+            }
 
-		if (GlobalAppState::getInstance().s_recordData) {
-			//g_depthSensingRGBDSensor->recordFrame();
+            if (GlobalAppState::getInstance().s_recordData) {
+                //g_depthSensingRGBDSensor->recordFrame();
 
-		}
-                               
-		if (validTransform && GlobalAppState::get().s_reconstructionEnabled) {
-                       
-			DepthCameraData depthCameraData(g_CudaImageManager->getIntegrateFrame(frameIdx).getDepthFrameGPU(), g_CudaImageManager->getIntegrateFrame(frameIdx).getColorFrameGPU());
-                   
-			integrate(depthCameraData, transformation);
-                  
-			g_depthSensingBundler->getTrajectoryManager()->addFrame(TrajectoryManager::TrajectoryFrame::Integrated, transformation, g_CudaImageManager->getCurrFrameNumber());
-                       
-		}
-		else { 
-			g_depthSensingBundler->getTrajectoryManager()->addFrame(TrajectoryManager::TrajectoryFrame::NotIntegrated_NoTransform, mat4f::zero(-std::numeric_limits<float>::infinity()), g_CudaImageManager->getCurrFrameNumber());
-		}
-                 
+            }
 
-		if (validTransform) {
-			g_lastRigidTransform = transformation;
-		}
-	}
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeReconstruct = t.getElapsedTimeMS(); }
-               
-	///////////////////////////////////////
-	// Render with view of current frame
-	///////////////////////////////////////
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { t.start(); } // just sync-ed //{ GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
-	bool trackingLost = bGotDepth && (!validTransform || bGlobalTrackingLost); //tracking lost when local frame has tracking lost or global frame has tracking lost
-	//visualizeFrame(pd3dImmediateContext, pd3dDevice, g_transformWorld * g_lastRigidTransform, trackingLost);
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeVisualize = t.getElapsedTimeMS(); }
+            if (validTransform && GlobalAppState::get().s_reconstructionEnabled) {
 
-       
-	///////////////////////////////////////////
-	////// Bundling Optimization
-	///////////////////////////////////////////
+                DepthCameraData depthCameraData(g_CudaImageManager->getIntegrateFrame(frameIdx).getDepthFrameGPU(), g_CudaImageManager->getIntegrateFrame(frameIdx).getColorFrameGPU());
+
+                integrate(depthCameraData, transformation);
+
+                g_depthSensingBundler->getTrajectoryManager()->addFrame(TrajectoryManager::TrajectoryFrame::Integrated, transformation, g_CudaImageManager->getCurrFrameNumber());
+
+            }
+            else {
+                g_depthSensingBundler->getTrajectoryManager()->addFrame(TrajectoryManager::TrajectoryFrame::NotIntegrated_NoTransform, mat4f::zero(-std::numeric_limits<float>::infinity()), g_CudaImageManager->getCurrFrameNumber());
+            }
+
+
+            if (validTransform) {
+                g_lastRigidTransform = transformation;
+            }
+        }
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeReconstruct = t.getElapsedTimeMS(); }
+
+        ///////////////////////////////////////
+        // Render with view of current frame
+        ///////////////////////////////////////
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { t.start(); } // just sync-ed //{ GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.start(); }
+        bool trackingLost = bGotDepth && (!validTransform || bGlobalTrackingLost); //tracking lost when local frame has tracking lost or global frame has tracking lost
+        //visualizeFrame(pd3dImmediateContext, pd3dDevice, g_transformWorld * g_lastRigidTransform, trackingLost);
+        if (GlobalBundlingState::get().s_enableGlobalTimings) { GlobalAppState::get().WaitForGPU(); cudaDeviceSynchronize(); t.stop(); TimingLog::getFrameTiming(true).timeVisualize = t.getElapsedTimeMS(); }
+
+
+        ///////////////////////////////////////////
+        ////// Bundling Optimization
+        ///////////////////////////////////////////
 #ifndef RUN_MULTITHREADED
 
-	g_depthSensingBundler->process(GlobalBundlingState::get().s_numLocalNonLinIterations, GlobalBundlingState::get().s_numLocalLinIterations,
-		GlobalBundlingState::get().s_numGlobalNonLinIterations, GlobalBundlingState::get().s_numGlobalLinIterations);
-	//g_depthSensingBundler->resetDEBUG(true);
+g_depthSensingBundler->process(GlobalBundlingState::get().s_numLocalNonLinIterations, GlobalBundlingState::get().s_numLocalLinIterations,
+    GlobalBundlingState::get().s_numGlobalNonLinIterations, GlobalBundlingState::get().s_numGlobalLinIterations);
+//g_depthSensingBundler->resetDEBUG(true);
 #endif
-               
-	// Stop Timing
-	if (GlobalBundlingState::get().s_enablePerFrameTimings) {
-		GlobalAppState::get().WaitForGPU(); GlobalAppState::get().s_Timer.stop();
-		TimingLog::addTotalFrameTime(GlobalAppState::get().s_Timer.getElapsedTimeMS());
-		std::cout << "<<< [Frame: " << g_CudaImageManager->getCurrFrameNumber() << " ] " << g_sceneRep->getHeapFreeCount() << " Frame Time:\t " << GlobalAppState::get().s_Timer.getElapsedTimeMS() << " [ms] >>>" << std::endl;
-	}
-	else {
-		std::cout << "<<< [Frame: " << g_CudaImageManager->getCurrFrameNumber() << " ] " << g_sceneRep->getHeapFreeCount() << " >>>" << std::endl;
-	}
 
-	//std::cout << VAR_NAME(timeReconstruct) << " : " << timeReconstruct << " [ms]" << std::endl;
-	//std::cout << VAR_NAME(timeVisualize) << " : " << timeVisualize << " [ms]" << std::endl;
-	//std::cout << VAR_NAME(timeReintegrate) << " : " << timeReintegrate << " [ms]" << std::endl;
-	//std::cout << std::endl;
-	//std::cout << "<<HEAP FREE>> " << g_sceneRep->getHeapFreeCount() << std::endl;
-	//TimingLogDepthSensing::printTimings();
+        // Stop Timing
+        if (GlobalBundlingState::get().s_enablePerFrameTimings) {
+            GlobalAppState::get().WaitForGPU(); GlobalAppState::get().s_Timer.stop();
+            TimingLog::addTotalFrameTime(GlobalAppState::get().s_Timer.getElapsedTimeMS());
+            std::cout << "<<< [Frame: " << g_CudaImageManager->getCurrFrameNumber() << " ] " << g_sceneRep->getHeapFreeCount() << " Frame Time:\t " << GlobalAppState::get().s_Timer.getElapsedTimeMS() << " [ms] >>>" << std::endl;
+        }
+        else {
+            std::cout << "<<< [Frame: " << g_CudaImageManager->getCurrFrameNumber() << " ] " << g_sceneRep->getHeapFreeCount() << " >>>" << std::endl;
+        }
 
-	//if (g_renderText) RenderText();
+        //std::cout << VAR_NAME(timeReconstruct) << " : " << timeReconstruct << " [ms]" << std::endl;
+        //std::cout << VAR_NAME(timeVisualize) << " : " << timeVisualize << " [ms]" << std::endl;
+        //std::cout << VAR_NAME(timeReintegrate) << " : " << timeReintegrate << " [ms]" << std::endl;
+        //std::cout << std::endl;
+        //std::cout << "<<HEAP FREE>> " << g_sceneRep->getHeapFreeCount() << std::endl;
+        //TimingLogDepthSensing::printTimings();
 
-	if (GlobalAppState::get().s_generateVideo) { // still renders the frames during the end optimize
-		//StopScanningAndExtractIsoSurfaceMC();
-		//getchar();
-		//renderToFile(pd3dImmediateContext, g_transformWorld * g_lastRigidTransform, trackingLost); //TODO fix can't run these at the same time
-		//std::cout << g_transformWorld << std::endl;
-		//renderTopDown(pd3dImmediateContext, g_transformWorld * g_lastRigidTransform, trackingLost);
-		//std::cout << "waiting..." << std::endl; getchar();
-	}
-	/*if (!g_depthSensingRGBDSensor->isReceivingFrames() && !GlobalAppState::get().s_printTimingsDirectory.empty()) {
-		const std::string outDir = GlobalAppState::get().s_printTimingsDirectory;
-		if (!util::directoryExists(outDir)) util::makeDirectory(outDir);
-		TimingLog::printAllTimings(outDir); // might skip the last frames but whatever
-		exit(1);
-	}*/    //change by guan
-	if (!g_depthSensingRGBDSensor->isReceivingFrames() && GlobalAppState::get().s_sensorIdx == 8 && GlobalAppState::get().s_numSolveFramesBeforeExit != (unsigned int)-1) { //todo something better?
-		static unsigned int countPastLast = 0;
-		const unsigned int endSolveFrame = GlobalAppState::get().s_numSolveFramesBeforeExit + 1;
-		if (countPastLast >= endSolveFrame) {
-			TrajectoryManager* tm = g_depthSensingBundler->getTrajectoryManager();
-			tm->generateUpdateLists();
-			if (tm->getNumActiveOperations() == 0) {
-				std::cout << "[no more reintegration ops] " << countPastLast << " frames past end" << std::endl;
-				StopScanningAndExit();
-			}
-		}
-		countPastLast++;
-	}
+        //if (g_renderText) RenderText();
+
+        if (GlobalAppState::get().s_generateVideo) { // still renders the frames during the end optimize
+            //StopScanningAndExtractIsoSurfaceMC();
+            //getchar();
+            //renderToFile(pd3dImmediateContext, g_transformWorld * g_lastRigidTransform, trackingLost); //TODO fix can't run these at the same time
+            //std::cout << g_transformWorld << std::endl;
+            //renderTopDown(pd3dImmediateContext, g_transformWorld * g_lastRigidTransform, trackingLost);
+            //std::cout << "waiting..." << std::endl; getchar();
+        }
+        /*if (!g_depthSensingRGBDSensor->isReceivingFrames() && !GlobalAppState::get().s_printTimingsDirectory.empty()) {
+            const std::string outDir = GlobalAppState::get().s_printTimingsDirectory;
+            if (!util::directoryExists(outDir)) util::makeDirectory(outDir);
+            TimingLog::printAllTimings(outDir); // might skip the last frames but whatever
+            exit(1);
+        }*/    //change by guan
+        if (!g_depthSensingRGBDSensor->isReceivingFrames() && GlobalAppState::get().s_sensorIdx == 8 && GlobalAppState::get().s_numSolveFramesBeforeExit != (unsigned int)-1) { //todo something better?
+            static unsigned int countPastLast = 0;
+            const unsigned int endSolveFrame = GlobalAppState::get().s_numSolveFramesBeforeExit + 1;
+            if (countPastLast >= endSolveFrame) {
+                TrajectoryManager* tm = g_depthSensingBundler->getTrajectoryManager();
+                tm->generateUpdateLists();
+                if (tm->getNumActiveOperations() == 0) {
+                    std::cout << "[no more reintegration ops] " << countPastLast << " frames past end" << std::endl;
+                    StopScanningAndExit();
+                }
+            }
+            countPastLast++;
+        }
 
 
 
-           // Set frame time
-           GLfloat currentFrame = glfwGetTime();
-           glfwPollEvents();
-           Do_Movement();
-     
-           glClearColor(0.0f,0.0f,0.0f,1.0f);
-	   glClear(GL_COLOR_BUFFER_BIT);
+       // Set frame time
+       GLfloat currentFrame = glfwGetTime();
+       glfwPollEvents();
+       Do_Movement();
 
-    
-            // Swap the screen buffers
-            // drawScene();
-            glfwSwapBuffers(window);
-           // glPopMatrix(); 
+       glClearColor(0.0f,0.0f,0.0f,1.0f);
+       glClear(GL_COLOR_BUFFER_BIT);
+
+
+       // Swap the screen buffers
+       // drawScene();
+       glfwSwapBuffers(window);
+       // glPopMatrix();
 
      //++count; 
-        }
-        glfwTerminate();
+    }
+    glfwTerminate();
 
 	// Set DXUT callbacks
 	//DXUTSetCallbackDeviceChanging(ModifyDeviceSettings);//change by guan

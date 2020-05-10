@@ -154,7 +154,8 @@ bool CUDAImageManager::process()
 	//////////////////////////////////////////////////////////////////////////////////////
 	//CUDAImageUtil::resampleToIntensity(d_intensitySIFT, m_widthSIFT, m_heightSIFT, d_colorInput, m_RGBDSensor->getColorWidth(), m_RGBDSensor->getColorHeight());
 
-	if (GlobalBundlingState::get().s_enableGlobalTimings) { cudaDeviceSynchronize(); s_timer.stop(); TimingLog::getFrameTiming(true).timeSensorProcess = s_timer.getElapsedTimeMS(); }
+	if (GlobalBundlingState::get().s_enableGlobalTimings) {
+	    cudaDeviceSynchronize(); s_timer.stop(); TimingLog::getFrameTiming(true).timeSensorProcess = s_timer.getElapsedTimeMS(); }
 
 	m_currFrame++;
 	return true;

@@ -133,6 +133,7 @@ target_link_libraries(FriedLiver
 # test
 CUDA_ADD_EXECUTABLE( test_SiftGPU
     test/test_SiftGPU.cpp
+    FriedLiver/Source/CUDAImageUtil.cu
     # sift
     FriedLiver/Source/SiftGPU/SIFTImageManager.cu
     FriedLiver/Source/SiftGPU/SIFTImageManager.cpp

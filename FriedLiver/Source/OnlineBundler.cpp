@@ -107,6 +107,11 @@ OnlineBundler::~OnlineBundler()
 void OnlineBundler::getCurrentFrame()
 {
 	m_cudaImageManager->copyToBundling(m_input.d_inputDepthRaw, m_input.d_inputDepthFilt, m_input.d_inputColor);
+	std::cout << "m_input.m_widthSIFT, m_input.m_heightSIFT "
+	            << m_input.m_widthSIFT << " " << m_input.m_heightSIFT << std::endl;
+	std::cout << "m_input.m_inputColorWidth, m_input.m_inputColorHeight "
+	            << m_input.m_inputColorWidth << " " << m_input.m_inputColorHeight << std::endl;
+	// RGB to gray
 	CUDAImageUtil::resampleToIntensity(m_input.d_intensitySIFT, m_input.m_widthSIFT, m_input.m_heightSIFT,
 		m_input.d_inputColor, m_input.m_inputColorWidth, m_input.m_inputColorHeight);
 

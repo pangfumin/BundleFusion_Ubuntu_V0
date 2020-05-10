@@ -279,7 +279,7 @@ int main(int argc, char** argv)
 		std::thread bundlingThread(bundlingThreadFunc);
 		//waiting until bundler is initialized
 		while (!g_bundler)	usleep(0);
-                 //std::cout << "g_bundler" << std::endl;
+         //std::cout << "g_bundler" << std::endl;
 #else
 		g_bundler = new OnlineBundler(g_RGBDSensor, g_imageManager);
                

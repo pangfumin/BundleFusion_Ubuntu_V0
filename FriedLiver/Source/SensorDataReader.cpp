@@ -103,26 +103,6 @@ bool SensorDataReader::processDepth()
 		//frameState.m_colorFrame = m_sensorData->decompressColorAlloc(m_currFrame);
 		//frameState.m_depthFrame = m_sensorData->decompressDepthAlloc(m_currFrame);
 
-//		std::cout << "debug --------------" << std::endl;
-//		std::cout << m_sensorData->m_depthWidth << " " <<  m_sensorData->m_depthHeight << std::endl;
-//		std::cout << getColorWidth() << " " << getColorHeight() << std::endl;
-//
-//		cv::Mat3b cv_rgb_image(m_sensorData->m_depthHeight, m_sensorData->m_depthWidth);
-//		cv::Mat1b cv_depth_image(m_sensorData->m_depthHeight, m_sensorData->m_depthWidth);
-//		for (int i = 0; i < getColorHeight(); i++) {
-//            for (int j = 0; j < getColorWidth(); j++) {
-//                int index = j + i * getColorWidth();
-//                vec3uc rgb = frameState.m_colorFrame[index];
-//                cv_rgb_image.at<cv::Vec3b>(i,j) = cv::Vec3b(rgb.b, rgb.g, rgb.r);
-//
-//                auto d = frameState.m_depthFrame[index];
-//                cv_depth_image.at<uchar>(i,j) = d >> 8;
-//
-//            }
-//		}
-//		cv::imshow("rgb_image", cv_rgb_image);
-//		cv::imshow("depth_image", cv_depth_image);
-//		cv::waitKey();
 
 		for (unsigned int i = 0; i < getDepthWidth()*getDepthHeight(); i++) {
 			if (frameState.m_depthFrame[i] == 0) depth[i] = -std::numeric_limits<float>::infinity();
