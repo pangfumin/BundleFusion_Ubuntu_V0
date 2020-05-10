@@ -221,7 +221,8 @@ void SiftGPU::PrintUsage()
 		<< "\n";
 }
 
-void SiftGPU::SetParams(unsigned int siftWidth, unsigned int siftHeight, bool enableTiming, unsigned int featureCountThreshold, float siftDepthMin, float siftDepthMax)
+void SiftGPU::SetParams(unsigned int siftWidth, unsigned int siftHeight, bool enableTiming,
+        unsigned int featureCountThreshold, float siftDepthMin, float siftDepthMax)
 {
 	GlobalUtil::_SiftDepthMin = siftDepthMin;
 	GlobalUtil::_SiftDepthMax = siftDepthMax;

@@ -1241,7 +1241,8 @@ namespace ml {
 
 			UINT64 numIMUFrames = 0;
 			in.read((char*)&numIMUFrames, sizeof(UINT64));
-			if (numIMUFrames > 0) {
+
+            if (numIMUFrames > 0) {
 				m_IMUFrames.resize(numIMUFrames);
 				for (size_t i = 0; i < m_IMUFrames.size(); i++) {
 					m_IMUFrames[i].loadFromFile(in);

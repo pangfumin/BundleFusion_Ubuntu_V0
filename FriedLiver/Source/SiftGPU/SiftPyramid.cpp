@@ -147,6 +147,8 @@ void SiftPyramid::BuildPyramid(float* d_data)
 
 void SiftPyramid::RunSIFT(float* d_colorData, const float* d_depthData)
 {
+
+
 	//*****************
 	//build the pyramid
 	//*****************
@@ -346,11 +348,10 @@ void SiftPyramid::DestroyPyramidData()
 	}
 }
 
-
-
 void SiftPyramid::DetectKeypoints(const float* d_depthData)
 {
 	cutilSafeCall(cudaMemset(d_featureCount, 0, sizeof(int) * _octave_num * param._dog_level_num));
+
 
 	float os = _octave_min >= 0 ? float(1 << _octave_min) : 1.0f / (1 << (-_octave_min));
 	float keyLocOffset = GlobalUtil::_LoweOrigin ? 0 : 0.5f;
@@ -379,11 +380,15 @@ void SiftPyramid::DetectKeypoints(const float* d_depthData)
 			float keyLocScale = os * (1 << (featureOctLevelIndex / param._dog_level_num));
 			//input, dog, dog + 1, dog -1
 			//output, key
-			ProgramCU::ComputeKEY(dog, key, param._dog_threshold, param._edge_threshold, &_featureTexRaw[featureOctLevelIndex], d_featureCount, featureOctLevelIndex,
+			ProgramCU::ComputeKEY(dog, key, param._dog_threshold, param._edge_threshold,
+			        &_featureTexRaw[featureOctLevelIndex], d_featureCount, featureOctLevelIndex,
 				keyLocScale, keyLocOffset, d_depthData, GlobalUtil::_SiftDepthMin, GlobalUtil::_SiftDepthMax);
 		}
 	}
-
+    std::cout << " _octave_num , param._dog_level_num: " <<  _octave_num << " " << param._dog_level_num << std::endl;
+//	std::vector<int> tem( _octave_num * param._dog_level_num);
+//
+//	cutilSafeCall(cudaMemcpy(tem.data(), d_featureCount, sizeof(int) * _octave_num * param._dog_level_num, cudaMemcpyDeviceToHost));
 	cutilSafeCall(cudaMemcpy(_levelFeatureNum, d_featureCount, sizeof(int) * _octave_num * param._dog_level_num, cudaMemcpyDeviceToHost));
 	_featureNum = 0;
 	for (int i = 0; i < _octave_num * param._dog_level_num; i++) {

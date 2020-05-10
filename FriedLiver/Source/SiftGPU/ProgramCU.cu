@@ -615,9 +615,9 @@ void ProgramCU::ComputeDOG(CuTexImage* gus, CuTexImage* dog, CuTexImage* got)
 
 void __global__ ComputeKEY_Kernel(float4* d_key, int width, int colmax, int rowmax,
 	float dog_threshold0, float dog_threshold, float edge_threshold, int subpixel_localization,
-	int4* d_featureList, int* d_featureCount, unsigned int featureOctLevelidx, float keyLocScale, float keyLocOffset, const float* d_depthData, float siftDepthMin, float siftDepthMax
-	, unsigned int maxNumFeatures
-	)
+	int4* d_featureList, int* d_featureCount, unsigned int featureOctLevelidx, float keyLocScale, float keyLocOffset,
+	const float* d_depthData, float siftDepthMin, float siftDepthMax
+	, unsigned int maxNumFeatures)
 {
 	const unsigned int depthWidth = c_siftCameraParams.m_depthWidth;
 	const unsigned int depthHeight = c_siftCameraParams.m_depthHeight;
@@ -740,6 +740,8 @@ void __global__ ComputeKEY_Kernel(float4* d_key, int width, int colmax, int rowm
 		}
 		if (offset_test_passed) {
 			result = v > nmax ? 1.0f : -1.0f;
+//			printf("d_featureCount: %d \n", featureOctLevelidx);
+
 			int addr = atomicAdd(d_featureCount + featureOctLevelidx, 1);
 			if (addr < maxNumFeatures) {
 				d_featureList[addr] = make_int4(col, row, 0, 0);
@@ -751,7 +753,8 @@ void __global__ ComputeKEY_Kernel(float4* d_key, int width, int colmax, int rowm
 
 
 //void ProgramCU::ComputeKEY(CuTexImage* dog, CuTexImage* key, float Tdog, float Tedge)
-void ProgramCU::ComputeKEY(CuTexImage* dog, CuTexImage* key, float Tdog, float Tedge, CuTexImage* featureList, int* d_featureCount, unsigned int featureOctLevelidx,
+void ProgramCU::ComputeKEY(CuTexImage* dog, CuTexImage* key, float Tdog, float Tedge, CuTexImage* featureList,
+		int* d_featureCount, unsigned int featureOctLevelidx,
 	float keyLocScale, float keyLocOffset, const float* d_depthData, float siftDepthMin, float siftDepthMax)
 {
 	int width = dog->GetImgWidth(), height = dog->GetImgHeight();
@@ -773,8 +776,7 @@ void ProgramCU::ComputeKEY(CuTexImage* dog, CuTexImage* key, float Tdog, float T
 		width - 1, height - 1, Tdog1, Tdog, Tedge, GlobalUtil::_SubpixelLocalization,
 		(int4*)featureList->_cuData, d_featureCount, featureOctLevelidx,
 		keyLocScale, keyLocOffset, d_depthData, siftDepthMin, siftDepthMax
-		, featureList->GetImgWidth()* featureList->GetImgHeight()
-		);
+		, featureList->GetImgWidth()* featureList->GetImgHeight());
 
 	ProgramCU::CheckErrorCUDA("ComputeKEY");
 }

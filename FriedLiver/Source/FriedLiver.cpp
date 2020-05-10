@@ -143,11 +143,11 @@ void bundlingThreadFunc() {
                
 		if (g_RGBDSensor->isReceivingFrames()) {
                                                                              
-                       // std::cout << g_bundler->getCurrProcessedFrame() << std::endl;// 4294967295 means -1
+            // std::cout << g_bundler->getCurrProcessedFrame() << std::endl;// 4294967295 means -1
 			if (g_bundler->getCurrProcessedFrame() % 10 == 0) { // stop solve
                                  
 				if (tOpt.joinable()) { // here is something wrong and give information "terminate called without an active exception"
-                                       tOpt.join();
+                       tOpt.join();
 				}
 			}
 			if (g_bundler->getCurrProcessedFrame() % 10 == 1) { // start solve
@@ -272,7 +272,8 @@ int main(int argc, char** argv)
                 
 
 		g_imageManager = new CUDAImageManager(GlobalAppState::get().s_integrationWidth, GlobalAppState::get().s_integrationHeight,
-			GlobalBundlingState::get().s_widthSIFT, GlobalBundlingState::get().s_heightSIFT, g_RGBDSensor, false);
+			GlobalBundlingState::get().s_widthSIFT, GlobalBundlingState::get().s_heightSIFT,
+			g_RGBDSensor, false);
 
 #ifdef RUN_MULTITHREADED
 		std::thread bundlingThread(bundlingThreadFunc);
