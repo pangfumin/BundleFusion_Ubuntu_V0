@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(BundleFusion)
 
-SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 set(CMAKE_CXX_STANDARD 11)
@@ -84,6 +84,8 @@ CUDA_ADD_EXECUTABLE(FriedLiver
     FriedLiver/Source/CUDACache.cpp
     FriedLiver/Source/GlobalAppState.cpp
     FriedLiver/Source/TrajectoryManager.cpp
+    FriedLiver/Source/OcvImageVisualizeUtil.cpp
+
 
     # sift
     FriedLiver/Source/SiftGPU/SIFTImageManager.cu
@@ -134,6 +136,7 @@ target_link_libraries(FriedLiver
 CUDA_ADD_EXECUTABLE( test_SiftGPU
     test/test_SiftGPU.cpp
     FriedLiver/Source/CUDAImageUtil.cu
+    FriedLiver/Source/OcvImageVisualizeUtil.cpp
     # sift
     FriedLiver/Source/SiftGPU/SIFTImageManager.cu
     FriedLiver/Source/SiftGPU/SIFTImageManager.cpp

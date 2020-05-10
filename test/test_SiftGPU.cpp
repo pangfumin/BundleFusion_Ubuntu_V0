@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "CUDAImageUtil.h"
+#include "OcvImageVisualizeUtil.h"
 #include "SiftGPU.h"
 
 
@@ -46,9 +47,25 @@ public:
 //        cv::imshow("rgba_image", intensity_uchar);
 //        cv::waitKey();
 
+
+        float s_sensorDepthMax = 4.0f;	//maximum sensor depth in meter
+        float s_sensorDepthMin = 0.1f;	//minimum sensor depth in meter
+        sift_ = new SiftGPU;
+        sift_->SetParams(width_, height_, false, 150, s_sensorDepthMin, s_sensorDepthMax);
+        sift_->InitSiftGPU();
+
     }
 
     void runSift() {
+        cv::Mat1b uchar_gray_image = deviceFloatGrayToHostUcharGray(d_intensity_, width_, height_);
+        cv::Mat3b colored_depth = colorizedDeviceFloatDepthImage(d_depth_, width_, height_);
+        cv::imshow("colored_depth", uchar_gray_image);
+        cv::waitKey();
+
+        int success = sift_->RunSIFT(d_intensity_, d_depth_);
+        if (!success) throw MLIB_EXCEPTION("Error running SIFT detection");
+        std::cout << "success: " << success << std::endl;
+//        unsigned int numKeypoints = sift_->GetKeyPointsAndDescriptorsCUDA(cur, d_inputDepthFilt, m_siftManager->getMaxNumKeyPointsPerImage());
 
     }
 
@@ -67,6 +84,10 @@ private:
     uchar4*					d_rgb_;
     float*					d_intensity_;
     float*                  d_depth_;
+
+    //
+    SiftGPU*				sift_;
+
 
 };
 
@@ -87,6 +108,7 @@ int main () {
 
 
     TestSiftGPU testSiftGpu(rgba_image, depth_image);
+    testSiftGpu.runSift();
 
 
 

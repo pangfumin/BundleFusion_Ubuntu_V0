@@ -15,6 +15,10 @@
 
 //for debugging
 #include "SiftVisualization.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include "OcvImageVisualizeUtil.h"
 
 Bundler::Bundler(unsigned int maxNumImages, unsigned int maxNumKeysPerImage,
 	const mat4f& siftIntrinsicsInv, const CUDAImageManager* manager, bool isLocal)
@@ -90,6 +94,19 @@ void Bundler::getCacheIntrinsics(float4x4& intrinsics, float4x4& intrinsicsInv)
 
 void Bundler::detectFeatures(float* d_intensitySift, const float* d_inputDepthFilt)
 {
+    // todo: show image to debug
+    int width = 640;
+    int height = 480;
+
+
+//    cv::Mat1b uchar_gray_image = deviceFloatGrayToHostUcharGray(d_intensitySift, width, height);
+//    cv::Mat3b colored_depth = colorizedDeviceFloatDepthImage(d_inputDepthFilt, width, height);
+//    cv::imshow("colored_depth", colored_depth);
+//    cv::waitKey();
+
+
+
+
 	SIFTImageGPU& cur = m_siftManager->createSIFTImageGPU();
 	int success = m_sift->RunSIFT(d_intensitySift, d_inputDepthFilt);
 	if (!success) throw MLIB_EXCEPTION("Error running SIFT detection");
