@@ -163,12 +163,12 @@ public:
 					image8(p.x, p.y).w = 255;
 				}
 			}
-			FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-depth.png", ColorImageR32G32B32(depth));
-			FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-intensity.png", intensity);
-			FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-normal-uchar4.png", image8);
-			FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-normal.png", image);
-			MLIB_CUDA_SAFE_CALL(cudaMemcpy(image.getData(), f.d_cameraposDownsampled, sizeof(float4)*image.getNumPixels(), cudaMemcpyDeviceToHost));
-			FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-campos.png", image);
+			// FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-depth.png", ColorImageR32G32B32(depth));
+			// FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-intensity.png", intensity);
+			// FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-normal-uchar4.png", image8);
+			// FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-normal.png", image);
+			// MLIB_CUDA_SAFE_CALL(cudaMemcpy(image.getData(), f.d_cameraposDownsampled, sizeof(float4)*image.getNumPixels(), cudaMemcpyDeviceToHost));
+			// FreeImageWrapper::saveImage(outDir + std::to_string(i) + "_cache-campos.png", image);
 		}
 	}
 

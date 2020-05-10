@@ -42,11 +42,11 @@ void RGBDSensor::init(unsigned int depthWidth, unsigned int depthHeight, unsigne
 {
 	std::cout << "sensor dimensions depth ( " << depthWidth << " / " << depthHeight <<" )" << std::endl;
 	std::cout << "sensor dimensions color ( " << colorWidth << " / " << colorHeight <<" )" << std::endl;
-	m_depthWidth  = static_cast<LONG>(depthWidth);
-	m_depthHeight = static_cast<LONG>(depthHeight);
+	m_depthWidth  = static_cast<long>(depthWidth);
+	m_depthHeight = static_cast<long>(depthHeight);
 
-	m_colorWidth  = static_cast<LONG>(colorWidth);
-	m_colorHeight = static_cast<LONG>(colorHeight);
+	m_colorWidth  = static_cast<long>(colorWidth);
+	m_colorHeight = static_cast<long>(colorHeight);
 
 	for (size_t i = 0; i < m_depthFloat.size(); i++) {
 		SAFE_DELETE_ARRAY(m_depthFloat[i]);

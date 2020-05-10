@@ -14,15 +14,10 @@ message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 
 find_package(GLEW REQUIRED)
 message(STATUS "Found GLEW in ${GLEW_INCLUDE_DIR}")
-
-find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
   include_directories(${GLEW_INCLUDE_DIRS})
   link_directories(${GLEW_LIBRARIES})
 endif()
-
-
-
 
 find_package(CUDA)
 #set(CUDA_SOURCE_PROPERTY_FORMAT OBJ)
@@ -36,7 +31,7 @@ include_directories(
 )
 
 #INCLUDE_DIRECTORIES(/home/manifold/OpenNI-Linux-x64-2.3.0.43/Include)
-INCLUDE_DIRECTORIES(/home/manifold/ASUS-Linux-x64-OpenNI2.2/Include)
+# INCLUDE_DIRECTORIES(/home/manifold/ASUS-Linux-x64-OpenNI2.2/Include)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 include_directories(${OpenGL_INCLUDE_DIRS})
@@ -86,7 +81,7 @@ file(GLOB CURRENT_SOURCES  FriedLiver/Source/*.cpp)
 CUDA_ADD_EXECUTABLE(FriedLiver 
 FriedLiver/Source/FriedLiver.cpp FriedLiver/Source/ConditionManager.cpp 
 FriedLiver/Source/RGBDSensor.cpp
-FriedLiver/Source/PrimeSenseSensor.cpp
+# FriedLiver/Source/PrimeSenseSensor.cpp
 #FriedLiver/Source/BinaryDumpReader.cpp
 FriedLiver/Source/SensorDataReader.cpp
 FriedLiver/Source/CUDAImageManager.cpp
@@ -132,17 +127,15 @@ FriedLiver/Source/DepthSensing/CameraUtil.cu
 #FriedLiver/Source/DepthSensing/StdOutputLogger.cpp
 )
 #add_subdirectory(external/mLib)
-target_link_libraries(FriedLiver ${PROJECT_NAME} ${CUDA_LIBRARIES}
-
+target_link_libraries(FriedLiver
+${PROJECT_NAME} 
+${CUDA_LIBRARIES}
 ${OPENGL_LIBRARIES}
 ${GLEW_LIBRARY}
 ${GLFW3_LIBRARY}
 GLEW
-glfw3
 X11 Xrandr Xinerama Xi Xxf86vm Xcursor pthread dl
 GLU
-#${PROJECT_NAME}/lib/libfreeimage.a
-#/home/manifold/OpenNI-Linux-x64-2.3.0.43/Redist/libOpenNI2.so
 OpenNI2
 ${OpenCV_LIBS}
 )

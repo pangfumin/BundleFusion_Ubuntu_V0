@@ -665,7 +665,7 @@ public:
 
 	// Multi-threading
 	//HANDLE hStreamingThread;//change by guan
-	DWORD dwStreamingThreadID;
+	// DWORD dwStreamingThreadID;
 
 	// Mutex
 	//HANDLE hMutexOut;

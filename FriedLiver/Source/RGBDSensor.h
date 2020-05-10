@@ -118,11 +118,11 @@ protected:
 	std::vector<float*> m_depthFloat;
 	vec4uc*				m_colorRGBX;
 
-	LONG   m_depthWidth;
-	LONG   m_depthHeight;
+	long   m_depthWidth;
+	long   m_depthHeight;
 
-	LONG   m_colorWidth;
-	LONG   m_colorHeight;
+	long   m_colorWidth;
+	long   m_colorHeight;
 
 	bool	m_bIsReceivingFrames;
 

@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <core-base/common.h>
 #include <core-util/parameterFile.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 //#define OPEN_NI
  
 //https://blog.csdn.net/Ziv2086581691/article/details/52248813
@@ -27,8 +30,8 @@ RGBDSensor* getRGBDSensor()
 		//static PrimeSenseSensor s_primeSense;
 		//return &s_primeSense;
                 //PrimeSenseSensor A;
-		g_sensor = new PrimeSenseSensor;
-		return g_sensor;
+		// g_sensor = new PrimeSenseSensor;
+		// return g_sensor;
 //#else 
 //		throw MLIB_EXCEPTION("Requires OpenNI 2 SDK and enable OPEN_NI macro");
 //#endif
@@ -274,7 +277,7 @@ int main(int argc, char** argv)
 #ifdef RUN_MULTITHREADED
 		std::thread bundlingThread(bundlingThreadFunc);
 		//waiting until bundler is initialized
-		while (!g_bundler)	sleep(0);
+		while (!g_bundler)	usleep(0);
                  //std::cout << "g_bundler" << std::endl;
 #else
 		g_bundler = new OnlineBundler(g_RGBDSensor, g_imageManager);

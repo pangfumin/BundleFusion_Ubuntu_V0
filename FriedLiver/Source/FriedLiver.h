@@ -7,7 +7,7 @@
 #include "ConditionManager.h"
 #include "RGBDSensor.h"
 //#include "BinaryDumpReader.h"
-#include "PrimeSenseSensor.h"
+// #include "PrimeSenseSensor.h"
 //#include "KinectSensor.h"
 //#include "KinectOneSensor.h"
 //#include "StructureSensor.h"  don't support linux for Uplink
