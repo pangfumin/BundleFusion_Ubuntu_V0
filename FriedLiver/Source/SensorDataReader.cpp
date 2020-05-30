@@ -104,6 +104,7 @@ bool SensorDataReader::processDepth()
 		//frameState.m_depthFrame = m_sensorData->decompressDepthAlloc(m_currFrame);
 
 
+//		std::cout << "m_sensorData->m_depthShift: " << m_sensorData->m_depthShift <<  std::endl;
 		for (unsigned int i = 0; i < getDepthWidth()*getDepthHeight(); i++) {
 			if (frameState.m_depthFrame[i] == 0) depth[i] = -std::numeric_limits<float>::infinity();
 			else depth[i] = (float)frameState.m_depthFrame[i] / m_sensorData->m_depthShift;
