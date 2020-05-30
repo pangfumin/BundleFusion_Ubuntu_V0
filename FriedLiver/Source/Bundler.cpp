@@ -98,13 +98,14 @@ void Bundler::detectFeatures(float* d_intensitySift, const float* d_inputDepthFi
     int width = 640;
     int height = 480;
 
-
+//
 //    cv::Mat1b uchar_gray_image = deviceFloatGrayToHostUcharGray(d_intensitySift, width, height);
 //    cv::Mat3b colored_depth = colorizedDeviceFloatDepthImage(d_inputDepthFilt, width, height);
 //    cv::imshow("colored_depth", colored_depth);
 //    cv::waitKey();
 
 
+    std::cout << "m_siftManager->getMaxNumKeyPointsPerImage(): " << m_siftManager->getMaxNumKeyPointsPerImage() << std::endl;
 
 
 	SIFTImageGPU& cur = m_siftManager->createSIFTImageGPU();

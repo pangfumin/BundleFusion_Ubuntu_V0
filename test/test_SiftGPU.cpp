@@ -5,6 +5,9 @@
 #include "CUDAImageUtil.h"
 #include "OcvImageVisualizeUtil.h"
 #include "SiftGPU.h"
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/no
+
 
 
 class TestSiftGPU {
@@ -57,15 +60,21 @@ public:
     }
 
     void runSift() {
-        cv::Mat1b uchar_gray_image = deviceFloatGrayToHostUcharGray(d_intensity_, width_, height_);
-        cv::Mat3b colored_depth = colorizedDeviceFloatDepthImage(d_depth_, width_, height_);
-        cv::imshow("colored_depth", uchar_gray_image);
-        cv::waitKey();
+//        cv::Mat1b uchar_gray_image = deviceFloatGrayToHostUcharGray(d_intensity_, width_, height_);
+//        cv::Mat3b colored_depth = colorizedDeviceFloatDepthImage(d_depth_, width_, height_);
+//        cv::imshow("colored_depth", uchar_gray_image);
+//        cv::waitKey();
 
         int success = sift_->RunSIFT(d_intensity_, d_depth_);
         if (!success) throw MLIB_EXCEPTION("Error running SIFT detection");
-        std::cout << "success: " << success << std::endl;
-//        unsigned int numKeypoints = sift_->GetKeyPointsAndDescriptorsCUDA(cur, d_inputDepthFilt, m_siftManager->getMaxNumKeyPointsPerImage());
+
+        SIFTImageGPU cur_kp_des;
+        MLIB_CUDA_SAFE_CALL(cudaMalloc(&cur_kp_des.d_keyPoints, sizeof(SIFTKeyPoint)*1024));
+        MLIB_CUDA_SAFE_CALL(cudaMalloc(&cur_kp_des.d_keyPointDescs, sizeof(SIFTKeyPointDesc)*1024));
+
+        unsigned int numKeypoints = sift_->GetKeyPointsAndDescriptorsCUDA(cur_kp_des, d_depth_, 1024);
+        std::cout << "success: " << success << " " << numKeypoints << std::endl;
+
 
     }
 
@@ -87,6 +96,7 @@ private:
 
     //
     SiftGPU*				sift_;
+    cv::Sif
 
 
 };

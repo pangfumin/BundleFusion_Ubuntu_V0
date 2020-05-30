@@ -162,3 +162,34 @@ target_link_libraries(test_SiftGPU
     ${OpenCV_LIBS}
 )
 
+CUDA_ADD_EXECUTABLE( test_glfw
+        test/test_glfw.cpp
+#        FriedLiver/Source/CUDAImageUtil.cu
+#        FriedLiver/Source/OcvImageVisualizeUtil.cpp
+#        # sift
+#        FriedLiver/Source/SiftGPU/SIFTImageManager.cu
+#        FriedLiver/Source/SiftGPU/SIFTImageManager.cpp
+#        FriedLiver/Source/SiftGPU/SiftGPU.cpp
+#        FriedLiver/Source/SiftGPU/ProgramCU.cu
+#        FriedLiver/Source/SiftGPU/CUDASiftConstant.cu
+#        #FriedLiver/Source/stdafx.cpp
+#        FriedLiver/Source/SiftGPU/SiftMatch.cpp
+#        FriedLiver/Source/SiftGPU/SiftPyramid.cpp
+#        FriedLiver/Source/SiftGPU/GlobalUtil.cpp
+#        FriedLiver/Source/SiftGPU/CuTexImage.cpp
+        )
+
+target_link_libraries(test_glfw
+        LIBEXT
+        ${CUDA_LIBRARIES}
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARY}
+        ${GLFW3_LIBRARY}
+        GLEW
+        X11 Xrandr Xinerama Xi Xxf86vm Xcursor pthread dl
+        GLU
+        #        OpenNI2
+        ${OpenCV_LIBS}
+        )
+
+
