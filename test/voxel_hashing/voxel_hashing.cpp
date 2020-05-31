@@ -25,6 +25,7 @@ g_CudaImageManager(cudaImageManager), g_depthSensingRGBDSensor(rgbdSensor){
     DepthCameraData::updateParams(g_depthCameraParams);
 
 
+
 }
 
 void VoxelHashingPipeline::process () {
@@ -90,4 +91,26 @@ void VoxelHashingPipeline::StopScanningAndExtractIsoSurfaceMC(const std::string&
 
     //g_sceneRep->debugHash();
     //g_chunkGrid->debugCheckForDuplicates();
+}
+
+void VoxelHashingPipeline::renderToCvImage(const mat4f& transform,  cv::Mat& image)
+{
+    if (g_sceneRep->getNumIntegratedFrames() > 0) {
+        std::cout << "getNumIntegratedFrames: " << g_sceneRep->getNumIntegratedFrames() << std::endl;
+        g_sceneRep->setLastRigidTransformAndCompactify(transform);	//TODO check that
+        g_rayCast->render(g_sceneRep->getHashData(), g_sceneRep->getHashParams(), transform);
+    }
+
+//    g_RGBDRenderer.RenderDepthMap(pd3dImmediateContext, g_rayCast->getRayCastData().d_depth, g_rayCast->getRayCastData().d_colors, g_rayCast->getRayCastParams().m_width, g_rayCast->getRayCastParams().m_height, g_rayCast->getIntrinsicsInv(), view, renderIntrinsics, g_CustomRenderTarget.getWidth(), g_CustomRenderTarget.getHeight(), GlobalAppState::get().s_renderingDepthDiscontinuityThresOffset, GlobalAppState::get().s_renderingDepthDiscontinuityThresLin);
+
+    int width = g_rayCast->getRayCastParams().m_width;
+
+    cv::Mat float_image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width,
+            CV_32FC4, const_cast<float4* >(g_rayCast->getRayCastData().d_colors));
+
+    image = float_image;
+//    image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width, CV_8UC4);
+//    float_image.convertTo(image, CV_8UC4);
+
+
 }

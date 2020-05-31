@@ -40,9 +40,9 @@ void CUDARayCastSDF::destroy(void)
 
 void CUDARayCastSDF::render(const HashDataStruct& hashData, const HashParams& hashParams, const mat4f& lastRigidTransform)
 {
-	//rayIntervalSplatting(hashData, hashParams, lastRigidTransform);//change by guan
-	//m_data.d_rayIntervalSplatMinArray = m_rayIntervalSplatting.mapMinToCuda();//change by guan
-	//m_data.d_rayIntervalSplatMaxArray = m_rayIntervalSplatting.mapMaxToCuda();//change by guan
+//	rayIntervalSplatting(hashData, hashParams, lastRigidTransform);//change by guan
+//	m_data.d_rayIntervalSplatMinArray = m_rayIntervalSplatting.mapMinToCuda();//change by guan
+//	m_data.d_rayIntervalSplatMaxArray = m_rayIntervalSplatting.mapMaxToCuda();//change by guan
 
 	// Start query for timing
 	if(GlobalAppState::getInstance().s_timingsDetailledEnabled)

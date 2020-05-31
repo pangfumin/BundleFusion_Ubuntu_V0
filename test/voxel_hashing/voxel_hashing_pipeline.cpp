@@ -81,6 +81,13 @@ int main() {
     }
 
 
+    mat4f transform = mat4f::identity();
+    cv::Mat render_image;
+//    voxelHashingPipeline.renderToCvImage(transform,render_image);
+
+//    cv::imshow("rendered", render_image);
+//    cv::waitKey();
+
     std::string filename = "/home/pang/test.ply";
     bool overwrite = true;
     voxelHashingPipeline.StopScanningAndExtractIsoSurfaceMC(filename, overwrite);

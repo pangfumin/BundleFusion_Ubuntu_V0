@@ -23,6 +23,8 @@ public:
 
     void StopScanningAndExtractIsoSurfaceMC(const std::string& filename, bool overwriteExistingFile /*= false*/);
 
+    void renderToCvImage(const mat4f& transform, cv::Mat& image);
+
 public:
     void integrate(const DepthCameraData& depthCameraData, const mat4f& transformation);
 
