@@ -44,10 +44,13 @@ bool CUDAImageManager::process()
 	const unsigned int bufferDimColorInput = m_RGBDSensor->getColorWidth()*m_RGBDSensor->getColorHeight();
 	MLIB_CUDA_SAFE_CALL(cudaMemcpy(d_colorInput, m_RGBDSensor->getColorRGBX(), sizeof(uchar4)*bufferDimColorInput, cudaMemcpyHostToDevice));
 
-	if ((m_RGBDSensor->getColorWidth() == m_widthIntegration) && (m_RGBDSensor->getColorHeight() == m_heightIntegration)) {
+
+//    std::cout << "(m_RGBDSensor->getColorWidth() == m_widthIntegration" << m_RGBDSensor->getColorWidth() << " " << m_widthIntegration << std::endl;
+    if ((m_RGBDSensor->getColorWidth() == m_widthIntegration) && (m_RGBDSensor->getColorHeight() == m_heightIntegration)) {
 		if (ManagedRGBDInputFrame::s_bIsOnGPU) {
 			CUDAImageUtil::copy<uchar4>(frame.m_colorIntegration, d_colorInput, m_widthIntegration, m_heightIntegration);
-			//std::swap(frame.m_colorIntegration, d_colorInput);
+//			std::swap(frame.m_colorIntegration, d_colorInput);
+//        std::cout << "testing "<< std::endl;
 		}
 		else {
 			memcpy(frame.m_colorIntegration, m_RGBDSensor->getColorRGBX(), sizeof(uchar4)*bufferDimColorInput);

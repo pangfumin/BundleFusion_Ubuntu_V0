@@ -5,8 +5,11 @@
 #include "RGBDSensor.h"
 #include "SensorDataReader.h"
 #include "OcvImageVisualizeUtil.h"
+#include "CUDAImageManager.h"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+
+#include "voxel_hashing.h"
 
 int main() {
 
@@ -43,30 +46,44 @@ int main() {
     int width = g_RGBDSensor->getDepthWidth();
     int height = g_RGBDSensor->getDepthHeight();
     int cnt = 0;
+
+    CUDAImageManager* g_imageManager = new CUDAImageManager(GlobalAppState::get().s_integrationWidth, GlobalAppState::get().s_integrationHeight,
+                                          GlobalBundlingState::get().s_widthSIFT, GlobalBundlingState::get().s_heightSIFT,
+                                          g_RGBDSensor, true);
+
+    VoxelHashingPipeline voxelHashingPipeline(g_RGBDSensor, g_imageManager);
+
     while (g_RGBDSensor->isReceivingFrames()) {
-        std::cout << cnt ++ << std::endl;
-        g_RGBDSensor->processDepth();
 
-        vec4uc* color = new vec4uc;
-        color = g_RGBDSensor->getColorRGBX();
 
-        cv::Mat imageWrapper(height, width, CV_8UC4, const_cast<vec4uc* >(color));
+        voxelHashingPipeline.process();
 
+
+
+        int width = g_RGBDSensor->getDepthWidth();
+        int height = g_RGBDSensor->getDepthHeight();
+
+        auto frame = g_imageManager->getLastIntegrateFrame();
+        auto* color_cpu = frame.getColorFrameCPU();
+        cv::Mat imageWrapper(height, width, CV_8UC4, const_cast<uchar4* >(color_cpu));
+        //
+        //            std::cout << "frame: " << g_imageManager->getCurrFrameNumber() << std::endl;
+
+        std::cout << "integrate " << std::endl;
         cv::cvtColor(imageWrapper, imageWrapper, cv::COLOR_RGBA2BGRA);
         cv::imshow("color", imageWrapper);
-        cv::waitKey(2);
+        int c = cv::waitKey();
+        if (c == 27) {
+            break;
+        }
 
-
-
-
-
-        mat4f T = g_RGBDSensor->getRigidTransform();
-        std::cout << T << std::endl;
 
     }
 
 
-
+    std::string filename = "/home/pang/test.ply";
+    bool overwrite = true;
+    voxelHashingPipeline.StopScanningAndExtractIsoSurfaceMC(filename, overwrite);
 
 
 

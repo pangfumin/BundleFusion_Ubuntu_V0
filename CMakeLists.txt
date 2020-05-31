@@ -200,8 +200,27 @@ CUDA_ADD_EXECUTABLE( voxel_hashing_pipeline
         test/voxel_hashing/voxel_hashing.cpp
         FriedLiver/Source/RGBDSensor.cpp
         FriedLiver/Source/SensorDataReader.cpp
-        #        FriedLiver/Source/CUDAImageUtil.cu
+        FriedLiver/Source/CUDAImageUtil.cu
         FriedLiver/Source/OcvImageVisualizeUtil.cpp
+        FriedLiver/Source/CUDAImageManager.cpp
+
+        FriedLiver/Source/TimingLog.cpp
+
+        FriedLiver/Source/DepthSensing/CUDAMarchingCubesSDF.cu
+        FriedLiver/Source/DepthSensing/CUDAMarchingCubesHashSDF.cpp
+        FriedLiver/Source/DepthSensing/CUDASceneRepChunkGrid.cu
+        FriedLiver/Source/DepthSensing/CUDASceneRepChunkGrid.cpp
+        FriedLiver/Source/DepthSensing/CUDAConstant.cu
+        FriedLiver/Source/DepthSensing/CUDASceneRepHashSDF.cu
+        FriedLiver/Source/DepthSensing/CUDASceneRepHashSDF.cpp
+        FriedLiver/Source/DepthSensing/TimingLogDepthSensing.cpp
+        FriedLiver/Source/DepthSensing/ScanCS.cu
+        FriedLiver/Source/DepthSensing/CUDAScan.cpp
+        FriedLiver/Source/DepthSensing/CUDARayCastSDF.cu
+        FriedLiver/Source/DepthSensing/CUDARayCastSDF.cpp
+        FriedLiver/Source/DepthSensing/CameraUtil.cu
+
+
         #        # sift
         #        FriedLiver/Source/SiftGPU/SIFTImageManager.cu
         #        FriedLiver/Source/SiftGPU/SIFTImageManager.cpp
