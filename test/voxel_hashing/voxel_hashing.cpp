@@ -35,6 +35,7 @@ void VoxelHashingPipeline::process () {
     DepthCameraData depthCameraData(g_CudaImageManager->getLastIntegrateFrame().getDepthFrameGPU(), g_CudaImageManager->getLastIntegrateFrame().getColorFrameGPU());
 
     mat4f transformation = mat4f::identity();
+//    mat4f transformation = mat4f::zero();
     integrate(depthCameraData, transformation);
 }
 
@@ -99,6 +100,7 @@ void VoxelHashingPipeline::renderToCvImage(const mat4f& transform,  cv::Mat& ima
     if (g_sceneRep->getNumIntegratedFrames() > 0) {
         std::cout << "getNumIntegratedFrames: " << g_sceneRep->getNumIntegratedFrames() << std::endl;
         g_sceneRep->setLastRigidTransformAndCompactify(transform);	//TODO check that
+
         g_rayCast->render(g_sceneRep->getHashData(), g_sceneRep->getHashParams(), transform);
     }
 

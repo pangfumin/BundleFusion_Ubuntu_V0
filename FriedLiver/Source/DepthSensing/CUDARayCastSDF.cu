@@ -14,12 +14,12 @@
 texture<float, cudaTextureType2D, cudaReadModeElementType> rayMinTextureRef;
 texture<float, cudaTextureType2D, cudaReadModeElementType> rayMaxTextureRef;
 
-__global__ void renderKernel(HashDataStruct hashData, RayCastData rayCastData)
+__global__ void renderKernel(HashDataStruct hashData, RayCastData rayCastData, RayCastParams rayCastParams)
 {
 	const unsigned int x = blockIdx.x*blockDim.x + threadIdx.x;
 	const unsigned int y = blockIdx.y*blockDim.y + threadIdx.y;
 
-	const RayCastParams& rayCastParams = c_rayCastParams;
+//	const RayCastParams& rayCastParams = c_rayCastParams;
 //    printf("test 1 %d %d %d %d \n", x, y, rayCastParams.m_width, rayCastParams.m_height);
 	if (x < rayCastParams.m_width && y < rayCastParams.m_height) {
 		rayCastData.d_depth[y*rayCastParams.m_width+x] = MINF;
@@ -74,7 +74,7 @@ extern "C" void renderCS(const HashDataStruct& hashData, const RayCastData &rayC
 	cudaBindTextureToArray(rayMinTextureRef, rayCastData.d_rayIntervalSplatMinArray, channelDesc);
 	cudaBindTextureToArray(rayMaxTextureRef, rayCastData.d_rayIntervalSplatMaxArray, channelDesc);
 
-	renderKernel<<<gridSize, blockSize>>>(hashData, rayCastData);
+	renderKernel<<<gridSize, blockSize>>>(hashData, rayCastData, rayCastParams);
 
 #ifdef _DEBUG
 	cutilSafeCall(cudaDeviceSynchronize());

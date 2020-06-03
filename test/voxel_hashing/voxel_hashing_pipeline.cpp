@@ -81,9 +81,14 @@ int main() {
     }
 
 
-    mat4f transform = mat4f::identity();
+    mat4f T = mat4f::identity();
+    T.at(2,3) = -1;
+    T.at(1,3) = 0.31;
+//    T.setZero();
+    std::cout << "T : \n" << T << std::endl;
     cv::Mat render_image;
-    voxelHashingPipeline.renderToCvImage(transform,render_image);
+
+    voxelHashingPipeline.renderToCvImage(T,render_image);
 
     cv::imshow("rendered", render_image);
     cv::waitKey();
