@@ -10,7 +10,8 @@ g_CudaImageManager(cudaImageManager), g_depthSensingRGBDSensor(rgbdSensor){
     //g_rayCast = new CUDARayCastSDF(CUDARayCastSDF::parametersFromGlobalAppState(GlobalAppState::get(), g_CudaImageManager->getColorIntrinsics(), g_CudaImageManager->getColorIntrinsicsInv()));
     g_rayCast = new CUDARayCastSDF(CUDARayCastSDF::parametersFromGlobalAppState(GlobalAppState::get(), g_CudaImageManager->getDepthIntrinsics(), g_CudaImageManager->getDepthIntrinsicsInv()));
 
-
+    auto rayCastParams = CUDARayCastSDF::parametersFromGlobalAppState(GlobalAppState::get(), g_CudaImageManager->getDepthIntrinsics(), g_CudaImageManager->getDepthIntrinsicsInv());
+    updateConstantRayCastParams(rayCastParams);
     g_marchingCubesHashSDF = new CUDAMarchingCubesHashSDF(CUDAMarchingCubesHashSDF::parametersFromGlobalAppState(GlobalAppState::get()));
     g_historgram = new CUDAHistrogramHashSDF(g_sceneRep->getHashParams());
 
@@ -104,13 +105,25 @@ void VoxelHashingPipeline::renderToCvImage(const mat4f& transform,  cv::Mat& ima
 //    g_RGBDRenderer.RenderDepthMap(pd3dImmediateContext, g_rayCast->getRayCastData().d_depth, g_rayCast->getRayCastData().d_colors, g_rayCast->getRayCastParams().m_width, g_rayCast->getRayCastParams().m_height, g_rayCast->getIntrinsicsInv(), view, renderIntrinsics, g_CustomRenderTarget.getWidth(), g_CustomRenderTarget.getHeight(), GlobalAppState::get().s_renderingDepthDiscontinuityThresOffset, GlobalAppState::get().s_renderingDepthDiscontinuityThresLin);
 
     int width = g_rayCast->getRayCastParams().m_width;
+    int height = g_rayCast->getRayCastParams().m_height;
+//    const_cast<float4* >(g_rayCast->getRayCastData().d_colors);
+
 
     cv::Mat float_image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width,
-            CV_32FC4, const_cast<float4* >(g_rayCast->getRayCastData().d_colors));
+            CV_32FC4 );
 
-    image = float_image;
-//    image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width, CV_8UC4);
-//    float_image.convertTo(image, CV_8UC4);
+    MLIB_CUDA_SAFE_CALL(cudaMemcpy(float_image.ptr<float4>(), g_rayCast->getRayCastData().d_colors, sizeof(float4)*width*height, cudaMemcpyDeviceToHost));
 
+//    for (int i = 0; i < height; i++) {
+//        for (int j = 0; j < height; j++) {
+//            float4 data = float_image.at<float4>(i,j);
+//            std::cout <<i<<", " << j << ": " << data.x << " " << data.y << " " << data.z << " " << data.w << std::endl;
+//        }
+//    }
+
+//    image = float_image;
+    image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width, CV_8UC4);
+    float_image.convertTo(image, CV_8UC4, 255);
+    cv::cvtColor(image, image, CV_RGBA2BGRA);
 
 }

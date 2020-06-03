@@ -14,29 +14,37 @@
 texture<float, cudaTextureType2D, cudaReadModeElementType> rayMinTextureRef;
 texture<float, cudaTextureType2D, cudaReadModeElementType> rayMaxTextureRef;
 
-__global__ void renderKernel(HashDataStruct hashData, RayCastData rayCastData) 
+__global__ void renderKernel(HashDataStruct hashData, RayCastData rayCastData)
 {
 	const unsigned int x = blockIdx.x*blockDim.x + threadIdx.x;
 	const unsigned int y = blockIdx.y*blockDim.y + threadIdx.y;
 
 	const RayCastParams& rayCastParams = c_rayCastParams;
-
+//    printf("test 1 %d %d %d %d \n", x, y, rayCastParams.m_width, rayCastParams.m_height);
 	if (x < rayCastParams.m_width && y < rayCastParams.m_height) {
 		rayCastData.d_depth[y*rayCastParams.m_width+x] = MINF;
 		rayCastData.d_depth4[y*rayCastParams.m_width+x] = make_float4(MINF,MINF,MINF,MINF);
 		rayCastData.d_normals[y*rayCastParams.m_width+x] = make_float4(MINF,MINF,MINF,MINF);
 		rayCastData.d_colors[y*rayCastParams.m_width+x] = make_float4(MINF,MINF,MINF,MINF);
+//		rayCastData.d_colors[y*rayCastParams.m_width+x] = make_float4(1,2,3,4);
 
 		float3 camDir = normalize(RayCastData::depthToCamera(x, y, 1.0f));
 		float3 worldCamPos = rayCastParams.m_viewMatrixInverse * make_float3(0.0f, 0.0f, 0.0f);
 		float4 w = rayCastParams.m_viewMatrixInverse * make_float4(camDir, 0.0f);
 		float3 worldDir = normalize(make_float3(w.x, w.y, w.z));
 
-		float minInterval = tex2D(rayMinTextureRef, x, y);
-		float maxInterval = tex2D(rayMaxTextureRef, x, y);
+//		float minInterval = tex2D(rayMinTextureRef, x, y);
+//		float maxInterval = tex2D(rayMaxTextureRef, x, y);
 
-		//float minInterval = rayCastParams.m_minDepth;
-		//float maxInterval = rayCastParams.m_maxDepth;
+		float minInterval = rayCastParams.m_minDepth;
+		float maxInterval = rayCastParams.m_maxDepth;
+
+
+//        float minInterval = 0.1;
+//        float maxInterval = 4;
+
+		//        printf("test 2");
+//    printf("test 1 %f %f \n",  minInterval, maxInterval);
 
 		//if (minInterval == 0 || minInterval == MINF) minInterval = rayCastParams.m_minDepth;
 		//if (maxInterval == 0 || maxInterval == MINF) maxInterval = rayCastParams.m_maxDepth;
