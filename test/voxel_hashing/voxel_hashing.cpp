@@ -2,8 +2,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-VoxelHashingPipeline::VoxelHashingPipeline(RGBDSensor* rgbdSensor, CUDAImageManager* cudaImageManager):
-g_CudaImageManager(cudaImageManager), g_depthSensingRGBDSensor(rgbdSensor){
+VoxelHashingPipeline::VoxelHashingPipeline(CUDAImageManager* cudaImageManager):
+g_CudaImageManager(cudaImageManager){
 
 
     g_sceneRep = new CUDASceneRepHashSDF(CUDASceneRepHashSDF::parametersFromGlobalAppState(GlobalAppState::get()));
@@ -12,6 +12,8 @@ g_CudaImageManager(cudaImageManager), g_depthSensingRGBDSensor(rgbdSensor){
 
     auto rayCastParams = CUDARayCastSDF::parametersFromGlobalAppState(GlobalAppState::get(), g_CudaImageManager->getDepthIntrinsics(), g_CudaImageManager->getDepthIntrinsicsInv());
     updateConstantRayCastParams(rayCastParams);
+
+
     g_marchingCubesHashSDF = new CUDAMarchingCubesHashSDF(CUDAMarchingCubesHashSDF::parametersFromGlobalAppState(GlobalAppState::get()));
     g_historgram = new CUDAHistrogramHashSDF(g_sceneRep->getHashParams());
 
@@ -29,14 +31,12 @@ g_CudaImageManager(cudaImageManager), g_depthSensingRGBDSensor(rgbdSensor){
 
 }
 
-void VoxelHashingPipeline::process () {
-    g_CudaImageManager->process();
+void VoxelHashingPipeline::process (const float* depthData, const uchar4* colorData, const mat4f* transform) {
 
-    DepthCameraData depthCameraData(g_CudaImageManager->getLastIntegrateFrame().getDepthFrameGPU(), g_CudaImageManager->getLastIntegrateFrame().getColorFrameGPU());
 
-    mat4f transformation = mat4f::identity();
-//    mat4f transformation = mat4f::zero();
-    integrate(depthCameraData, transformation);
+    DepthCameraData depthCameraData(depthData, colorData);
+
+    integrate(depthCameraData, *transform);
 }
 
 
@@ -104,12 +104,8 @@ void VoxelHashingPipeline::renderToCvImage(const mat4f& transform,  cv::Mat& ima
         g_rayCast->render(g_sceneRep->getHashData(), g_sceneRep->getHashParams(), transform);
     }
 
-//    g_RGBDRenderer.RenderDepthMap(pd3dImmediateContext, g_rayCast->getRayCastData().d_depth, g_rayCast->getRayCastData().d_colors, g_rayCast->getRayCastParams().m_width, g_rayCast->getRayCastParams().m_height, g_rayCast->getIntrinsicsInv(), view, renderIntrinsics, g_CustomRenderTarget.getWidth(), g_CustomRenderTarget.getHeight(), GlobalAppState::get().s_renderingDepthDiscontinuityThresOffset, GlobalAppState::get().s_renderingDepthDiscontinuityThresLin);
-
     int width = g_rayCast->getRayCastParams().m_width;
     int height = g_rayCast->getRayCastParams().m_height;
-//    const_cast<float4* >(g_rayCast->getRayCastData().d_colors);
-
 
     cv::Mat float_image = cv::Mat(g_rayCast->getRayCastParams().m_height, g_rayCast->getRayCastParams().m_width,
             CV_32FC4 );

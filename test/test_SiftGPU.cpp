@@ -96,7 +96,6 @@ private:
 
     //
     SiftGPU*				sift_;
-    cv::Sif
 
 
 };

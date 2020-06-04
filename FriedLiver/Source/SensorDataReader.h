@@ -41,6 +41,7 @@ public:
 	std::string getSensorName() const;
 
 	mat4f getRigidTransform(int offset) const;
+	virtual mat4f getRigidTransform() const;
 
 
 	void stopReceivingFrames() { m_bIsReceivingFrames = false; }

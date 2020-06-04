@@ -51,14 +51,18 @@ int main() {
                                           GlobalBundlingState::get().s_widthSIFT, GlobalBundlingState::get().s_heightSIFT,
                                           g_RGBDSensor, true);
 
-    VoxelHashingPipeline voxelHashingPipeline(g_RGBDSensor, g_imageManager);
+    VoxelHashingPipeline voxelHashingPipeline( g_imageManager);
 
     while (g_RGBDSensor->isReceivingFrames()) {
+        g_imageManager->process();
+        auto T = g_RGBDSensor->getRigidTransform();
+
+        auto depthData = g_imageManager->getLastIntegrateFrame().getDepthFrameGPU();
+        auto colorData = g_imageManager->getLastIntegrateFrame().getColorFrameGPU();
+        voxelHashingPipeline.process(depthData, colorData, &T);
 
 
-        voxelHashingPipeline.process();
-
-
+        std::cout << "T: \n" << T<< std::endl;
 
         int width = g_RGBDSensor->getDepthWidth();
         int height = g_RGBDSensor->getDepthHeight();
@@ -66,44 +70,29 @@ int main() {
         auto frame = g_imageManager->getLastIntegrateFrame();
         auto* color_cpu = frame.getColorFrameCPU();
         cv::Mat imageWrapper(height, width, CV_8UC4, const_cast<uchar4* >(color_cpu));
-        //
-        //            std::cout << "frame: " << g_imageManager->getCurrFrameNumber() << std::endl;
 
         std::cout << "integrate " << std::endl;
         cv::cvtColor(imageWrapper, imageWrapper, cv::COLOR_RGBA2BGRA);
         cv::imshow("color", imageWrapper);
-        int c = cv::waitKey();
+
+
+        cv::Mat render_image;
+
+        voxelHashingPipeline.renderToCvImage(T,render_image);
+
+        cv::imshow("rendered", render_image);
+
+        int c = cv::waitKey(3);
         if (c == 27) {
             break;
         }
-
-
     }
 
-
-    mat4f T = mat4f::identity();
-    T.at(2,3) = -1;
-    T.at(1,3) = 0.31;
-//    T.setZero();
-    std::cout << "T : \n" << T << std::endl;
-    cv::Mat render_image;
-
-    voxelHashingPipeline.renderToCvImage(T,render_image);
-
-    cv::imshow("rendered", render_image);
-    cv::waitKey();
 
     std::string filename = "/home/pang/test.ply";
     bool overwrite = true;
     voxelHashingPipeline.StopScanningAndExtractIsoSurfaceMC(filename, overwrite);
 
-
-
-
-
-
-
-
-    return 0;
+     return 0;
 
 }

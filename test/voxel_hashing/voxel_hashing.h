@@ -16,9 +16,9 @@
 
 class VoxelHashingPipeline {
 public:
-    VoxelHashingPipeline(RGBDSensor* rgbdSensor, CUDAImageManager* cudaImageManager);
+    VoxelHashingPipeline(CUDAImageManager* cudaImageManager);
 
-    void process ();
+    void process (const float* depthData, const uchar4* colorData, const mat4f* transform);
 
 
     void StopScanningAndExtractIsoSurfaceMC(const std::string& filename, bool overwriteExistingFile /*= false*/);
