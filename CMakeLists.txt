@@ -219,6 +219,8 @@ CUDA_ADD_EXECUTABLE( voxel_hashing_pipeline
         FriedLiver/Source/DepthSensing/CUDARayCastSDF.cu
         FriedLiver/Source/DepthSensing/CUDARayCastSDF.cpp
         FriedLiver/Source/DepthSensing/CameraUtil.cu
+        FriedLiver/Source/DepthSensing/CUDAHistogramHashSDF.cpp
+        FriedLiver/Source/DepthSensing/CUDAHistogramHashSDF.cu
 
 
         #        # sift

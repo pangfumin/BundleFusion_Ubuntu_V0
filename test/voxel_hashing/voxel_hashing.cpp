@@ -59,7 +59,7 @@ void VoxelHashingPipeline::integrate(const DepthCameraData& depthCameraData, con
 
         g_sceneRep->integrate(g_transformWorld * transformation, depthCameraData, g_depthCameraParams, d_bitMask);//here is the problem
 
-//        g_sceneRep->debugHash();
+        g_sceneRep->debugHash();
     }
     //else {
     //	//compactification is required for the ray cast splatting
@@ -69,9 +69,10 @@ void VoxelHashingPipeline::integrate(const DepthCameraData& depthCameraData, con
 
 void VoxelHashingPipeline::StopScanningAndExtractIsoSurfaceMC(const std::string& filename, bool overwriteExistingFile /*= false*/)
 {
-    //g_sceneRep->debugHash();
+//    g_sceneRep->debugHash();
     //g_chunkGrid->debugCheckForDuplicates();
 
+    g_historgram->computeHistrogram(g_sceneRep->getHashData(), g_sceneRep->getHashParams());
 
     Timer t;
 

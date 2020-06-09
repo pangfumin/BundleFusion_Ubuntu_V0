@@ -182,6 +182,9 @@ public:
 	void debugHash() {
 		HashEntry* hashCPU = new HashEntry[m_hashParams.m_hashBucketSize*m_hashParams.m_hashNumBuckets];
 		unsigned int* heapCPU = new unsigned int[m_hashParams.m_numSDFBlocks];
+//		std::cout << "m_hashParams.m_hashBucketSize: " << m_hashParams.m_hashBucketSize << std::endl;
+//		std::cout << "m_hashParams.m_hashNumBuckets: " << m_hashParams.m_hashNumBuckets << std::endl;
+//		std::cout << "m_hashParams.m_numSDFBlocks: " << m_hashParams.m_numSDFBlocks << std::endl;
 		unsigned int heapCounterCPU;
 
 		MLIB_CUDA_SAFE_CALL(cudaMemcpy(&heapCounterCPU, m_hashData.d_heapCounter, sizeof(unsigned int), cudaMemcpyDeviceToHost));
@@ -273,8 +276,8 @@ public:
 								pos = pos * m_hashParams.m_virtualVoxelSize;
 								voxelPC.m_points.push_back(pos);
 
-								std::cout << "voxel weight " << v.weight << std::endl;
-								std::cout << "voxel sdf " << v.sdf << std::endl;
+//								std::cout << "voxel weight " << v.weight << std::endl;
+//								std::cout << "voxel sdf " << v.sdf << std::endl;
 							}
 						}
 					}
