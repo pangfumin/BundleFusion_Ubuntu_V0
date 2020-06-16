@@ -14,8 +14,6 @@
 #include "mLib.h"
 #endif
 
-
-
 struct RayCastSample
 {
 	float sdf;
@@ -222,7 +220,8 @@ struct RayCastData {
 	}
 
 	__device__
-	void traverseCoarseGridSimpleSampleAll(const HashDataStruct& hash, const float3& worldCamPos, const float3& worldDir, const float3& camDir, const int3& dTid, float minInterval, float maxInterval) const
+	void traverseCoarseGridSimpleSampleAll(const HashDataStruct& hash, const float3& worldCamPos,
+	        const float3& worldDir, const float3& camDir, const int3& dTid, float minInterval, float maxInterval) const
 	{
 		const RayCastParams& rayCastParams = c_rayCastParams;
 
@@ -238,6 +237,7 @@ struct RayCastData {
 #pragma unroll 1
 		while(rayCurrent < rayEnd)
 		{
+		    // ray in W frame
 			float3 currentPosWorld = worldCamPos+rayCurrent*worldDir;
 			float dist;	uchar3 color;
 
@@ -280,6 +280,7 @@ struct RayCastData {
 				lastSample.weight = 1;
 				rayCurrent += rayCastParams.m_rayIncrement;
 			} else {
+			    // moves forward
 				lastSample.weight = 0;
 				rayCurrent += rayCastParams.m_rayIncrement;
 			}

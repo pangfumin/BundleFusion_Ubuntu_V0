@@ -42,7 +42,7 @@ void CUDARayCastSDF::render(const HashDataStruct& hashData, const HashParams& ha
 {
 //	rayIntervalSplatting(hashData, hashParams, lastRigidTransform);//change by guan
 
-std::cout << "lastRigidTransform: \n" << lastRigidTransform << std::endl;
+//std::cout << "lastRigidTransform: \n" << lastRigidTransform << std::endl;
     m_params.m_numOccupiedSDFBlocks = hashParams.m_numOccupiedBlocks;
     m_params.m_viewMatrix = MatrixConversion::toCUDA(lastRigidTransform.getInverse());
     m_params.m_viewMatrixInverse = MatrixConversion::toCUDA(lastRigidTransform);

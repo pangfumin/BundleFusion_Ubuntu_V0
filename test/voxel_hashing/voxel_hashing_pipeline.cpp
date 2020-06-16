@@ -55,14 +55,14 @@ int main() {
 
     while (g_RGBDSensor->isReceivingFrames()) {
         g_imageManager->process();
-        auto T = g_RGBDSensor->getRigidTransform();
+        auto T_WC = g_RGBDSensor->getRigidTransform();
 
         auto depthData = g_imageManager->getLastIntegrateFrame().getDepthFrameGPU();
         auto colorData = g_imageManager->getLastIntegrateFrame().getColorFrameGPU();
-        voxelHashingPipeline.process(depthData, colorData, &T);
+        voxelHashingPipeline.process(depthData, colorData, &T_WC);
 
 
-        std::cout << "T: \n" << T<< std::endl;
+        std::cout << "T_WC: \n" << T_WC<< std::endl;
 
         int width = g_RGBDSensor->getDepthWidth();
         int height = g_RGBDSensor->getDepthHeight();
@@ -78,7 +78,7 @@ int main() {
 
         cv::Mat render_image;
 
-        voxelHashingPipeline.renderToCvImage(T,render_image);
+        voxelHashingPipeline.renderToCvImage(T_WC,render_image);
 
         cv::imshow("rendered", render_image);
 
