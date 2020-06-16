@@ -224,7 +224,8 @@ __global__ void allocKernel(HashDataStruct hashData, DepthCameraData cameraData,
 		while(iter < g_MaxLoopIterCount) {
 
 			//check if it's in the frustum and not checked out
-			if (hashData.isSDFBlockInCameraFrustumApprox(idCurrentVoxel) && !isSDFBlockStreamedOut(idCurrentVoxel, hashData, d_bitMask)) {		
+			if (hashData.isSDFBlockInCameraFrustumApprox(idCurrentVoxel) &&
+			        !isSDFBlockStreamedOut(idCurrentVoxel, hashData, d_bitMask)) {
 				hashData.allocBlock(idCurrentVoxel);
 			}
 

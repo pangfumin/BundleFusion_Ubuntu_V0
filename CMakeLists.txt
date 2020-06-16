@@ -250,3 +250,22 @@ target_link_libraries(voxel_hashing_pipeline
         )
 
 
+CUDA_ADD_EXECUTABLE( tsdf_fusion_demo
+      test/tsdf_fusion/demo.cu
+#      test/tsdf_fusion/tsdf2mesh.m
+        )
+
+target_link_libraries(tsdf_fusion_demo
+        LIBEXT
+        ${CUDA_LIBRARIES}
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARY}
+        ${GLFW3_LIBRARY}
+        GLEW
+        X11 Xrandr Xinerama Xi Xxf86vm Xcursor pthread dl
+        GLU
+        #        OpenNI2
+        ${OpenCV_LIBS}
+        )
+
+
